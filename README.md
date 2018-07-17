@@ -51,9 +51,24 @@ Airl-exporter watches the configuration file and applies changes related to the 
 To get your favourite sensors IDs use Airly map, find an interesting sensor and click to see details. Sensor ID
 will appear in the url (`...&id=1015`).
 
-## Exposed metrics
+## Installing and running
 
-List of exposed metrics:
+You can use Docker to start airly-exporter:
+
+```
+docker pull tpimages/airly-exporter:latest
+docker run --rm -e API_KEY=my-api-key -p 8080:8080 tpimages/airly-exporter:latest
+```
+
+and metrics are exposed via http://localhost:8080/metrics
+
+Alternatively you can install this using `go`:
+
+```go get github.com/tomplus/airly-exporter```
+
+or download binary file from [airly-exporter/releases](https://github.com/tomplus/airly-exporter/releases).
+
+## List of exposed metrics:
 
 ```
 # HELP airly_air_quality_index Common Air Quality Index (CAQI)
