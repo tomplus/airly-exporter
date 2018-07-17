@@ -10,7 +10,8 @@ Prometheus server to scrape metrics and visualize them.
 ## Access to the Airly API
 
 An API Key is required to query Airly API. You can get it for free after registration at airly.eu.
-You have to know that free API token is limited to 
+You have to know that free API token is limited to 1000 requests per day and 50 requests per minute, so
+set reasonable value for the `refresh-interval` parameter.
 
 More info: [developer.airly.eu](https://developer.airly.eu/docs)
 
@@ -47,6 +48,8 @@ sensors=204,822
 
 Airl-exporter watches the configuration file and applies changes related to the `sensors` on the fly.
 
+To get your favourite sensors IDs use Airly map, find an interesting sensor and click to see details. Sensor ID
+will appear in the url (`...&id=1015`).
 
 ## Exposed metrics
 
