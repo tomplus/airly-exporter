@@ -4,9 +4,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+// PromCollectors has instances of Prometheus Collectors
 type PromCollectors struct {
-	count_total     prometheus.Counter
-	error_total     prometheus.Counter
+	countTotal      prometheus.Counter
+	errorTotal      prometheus.Counter
 	responseTime    prometheus.Histogram
 	responseCode    *prometheus.CounterVec
 	airQualityIndex *prometheus.GaugeVec
@@ -21,19 +22,20 @@ type PromCollectors struct {
 	windSpeed       *prometheus.GaugeVec
 }
 
+// RegisterCollectors registers all collectors
 func (promCollectors *PromCollectors) RegisterCollectors() {
 
-	promCollectors.count_total = prometheus.NewCounter(prometheus.CounterOpts{
+	promCollectors.countTotal = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: "airly_count_total",
 		Help: "Total number of performed check",
 	})
-	prometheus.MustRegister(promCollectors.count_total)
+	prometheus.MustRegister(promCollectors.countTotal)
 
-	promCollectors.error_total = prometheus.NewCounter(prometheus.CounterOpts{
+	promCollectors.errorTotal = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: "airly_errors_total",
 		Help: "Total number of errors",
 	})
-	prometheus.MustRegister(promCollectors.error_total)
+	prometheus.MustRegister(promCollectors.errorTotal)
 
 	promCollectors.responseTime = prometheus.NewHistogram(prometheus.HistogramOpts{
 		Name: "airly_request_duration_seconds",
@@ -110,18 +112,17 @@ func (promCollectors *PromCollectors) RegisterCollectors() {
 	prometheus.MustRegister(promCollectors.windSpeed)
 }
 
+// SetMeasurements copied values from latest measurements to Prometheus collectors
 func (promCollectors *PromCollectors) SetMeasurements(sensor string, measurements AllMeasurements) {
-
-	sensor_labels := prometheus.Labels{"sensor": sensor}
-
-	promCollectors.airQualityIndex.With(sensor_labels).Set(measurements.AirQualityIndex)
-	promCollectors.humidity.With(sensor_labels).Set(measurements.Humidity)
-	promCollectors.pm1.With(sensor_labels).Set(measurements.Pm1)
-	promCollectors.pm10.With(sensor_labels).Set(measurements.Pm10)
-	promCollectors.pm25.With(sensor_labels).Set(measurements.Pm25)
-	promCollectors.pollutionLevel.With(sensor_labels).Set(measurements.PollutionLevel)
-	promCollectors.pressure.With(sensor_labels).Set(measurements.Pressure)
-	promCollectors.temperature.With(sensor_labels).Set(measurements.Temperature)
-	promCollectors.windDirection.With(sensor_labels).Set(measurements.WindDirection)
-	promCollectors.windSpeed.With(sensor_labels).Set(measurements.WindSpeed)
+	sensorLabels := prometheus.Labels{"sensor": sensor}
+	promCollectors.airQualityIndex.With(sensorLabels).Set(measurements.AirQualityIndex)
+	promCollectors.humidity.With(sensorLabels).Set(measurements.Humidity)
+	promCollectors.pm1.With(sensorLabels).Set(measurements.Pm1)
+	promCollectors.pm10.With(sensorLabels).Set(measurements.Pm10)
+	promCollectors.pm25.With(sensorLabels).Set(measurements.Pm25)
+	promCollectors.pollutionLevel.With(sensorLabels).Set(measurements.PollutionLevel)
+	promCollectors.pressure.With(sensorLabels).Set(measurements.Pressure)
+    promCollectors.temperature.With(sensorLabels).Set(measurements.Temperature)
+	promCollectors.windDirection.With(sensorLabels).Set(measurements.WindDirection)
+	promCollectors.windSpeed.With(sensorLabels).Set(measurements.WindSpeed)
 }

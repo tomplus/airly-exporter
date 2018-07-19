@@ -6,23 +6,27 @@ import (
 	"net/url"
 )
 
-type ApiClient struct {
+// APIClient manages communication with Arily API
+type APIClient struct {
 	url string
 	key string
 }
 
+// SensorMeasurementsResponse is a response from API with measurements
 type SensorMeasurementsResponse struct {
 	CurrentMeasurements AllMeasurements          `json:"currentMeasurements,omitempty"`
 	Forecast            []MeasurementsTimeFramed `json:"forecast,omitempty"`
 	History             []MeasurementsTimeFramed `json:"history,omitempty"`
 }
 
+// MeasurementsTimeFramed is a response from API with measurement time series
 type MeasurementsTimeFramed struct {
 	FromDateTime string          `json:"fromDateTime,omitempty"`
 	Measurements AllMeasurements `json:"measurements,omitempty"`
 	TillDateTime string          `json:"tillDateTime,omitempty"`
 }
 
+// AllMeasurements is a response from API with one set of measurement
 type AllMeasurements struct {
 	AirQualityIndex float64 `json:"airQualityIndex,omitempty"`
 	Humidity        float64 `json:"humidity,omitempty"`
@@ -37,17 +41,19 @@ type AllMeasurements struct {
 	WindSpeed       float64 `json:"windSpeed,omitempty"`
 }
 
-func NewApiClient(apiUrl string, apiKey string) *ApiClient {
-	return &ApiClient{apiUrl, apiKey}
+// NewAPIClient creates a new APIClient
+func NewAPIClient(apiURL string, apiKey string) *APIClient {
+	return &APIClient{apiURL, apiKey}
 }
 
-func (api *ApiClient) SensorMeasurements(sensor_id string) (SensorMeasurementsResponse, int, error) {
+// SensorMeasurements returns response from Airly API for sensorID 
+func (api *APIClient) SensorMeasurements(sensorID string) (SensorMeasurementsResponse, int, error) {
 
 	var response SensorMeasurementsResponse
 
 	v := url.Values{}
 	v.Set("apikey", api.key)
-	v.Set("sensorId", sensor_id)
+	v.Set("sensorId", sensorID)
 	req := api.url + "/v1/sensor/measurements?" + v.Encode()
 
 	resp, err := http.Get(req)

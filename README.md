@@ -1,5 +1,7 @@
 # Airly-exporter
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/tomplus/airly-exporter](https://goreportcard.com/report/github.com/tomplus/airly-exporter)
+
 Airly-exporter for Prometheus.
 
 ## Overview

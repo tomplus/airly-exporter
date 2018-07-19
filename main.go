@@ -17,27 +17,28 @@ import (
 	"time"
 )
 
+// AirlyExporter contains parameters for Airly-exporter
 type AirlyExporter struct {
 	configFile      *string
 	listenAddress   *string
-	apiUrl          *string
+	apiURL          *string
 	apiKey          *string
 	refreshInterval *string
 	sensors         *string
 	promCollectors  PromCollectors
-	api             *ApiClient
+	api             *APIClient
 }
 
-func FlagStringWithDefaultFromEnv(name string, value string, usage string) *string {
-	env_name := strings.Replace(strings.ToUpper(name), "-", "_", -1)
-	def_value := os.Getenv(env_name)
-	if def_value == "" {
-		def_value = value
+func flagStringWithDefaultFromEnv(name string, value string, usage string) *string {
+	envName := strings.Replace(strings.ToUpper(name), "-", "_", -1)
+	defValue := os.Getenv(envName)
+	if defValue == "" {
+		defValue = value
 	}
-	return flag.String(name, def_value, usage)
+	return flag.String(name, defValue, usage)
 }
 
-func (airlyExporter AirlyExporter) ReadConfigFile() {
+func (airlyExporter AirlyExporter) readConfigFile() {
 	log.Printf("Load configuration from file %v", *airlyExporter.configFile)
 	file, err := os.Open(*airlyExporter.configFile)
 	if err != nil {
@@ -62,7 +63,7 @@ func (airlyExporter AirlyExporter) ReadConfigFile() {
 	}
 }
 
-func (airlyExporter AirlyExporter) WatchConfig() {
+func (airlyExporter AirlyExporter) watchConfig() {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +79,7 @@ func (airlyExporter AirlyExporter) WatchConfig() {
 		select {
 		case event := <-watcher.Events:
 			if event.Op&fsnotify.Write == fsnotify.Write {
-				airlyExporter.ReadConfigFile()
+				airlyExporter.readConfigFile()
 			}
 		case err := <-watcher.Errors:
 			log.Println("error:", err)
@@ -86,27 +87,27 @@ func (airlyExporter AirlyExporter) WatchConfig() {
 	}
 }
 
-func (airlyExporter AirlyExporter) WatchSensors() {
+func (airlyExporter AirlyExporter) watchSensors() {
 
 	duration, err := time.ParseDuration(*airlyExporter.refreshInterval)
 	if err != nil {
 		log.Fatal(err)
 	}
-	airlyExporter.api = NewApiClient(*airlyExporter.apiUrl, *airlyExporter.apiKey)
+	airlyExporter.api = NewAPIClient(*airlyExporter.apiURL, *airlyExporter.apiKey)
 
 	for {
 		sensors := strings.Split(*airlyExporter.sensors, ",")
 		for _, sensor := range sensors {
 			log.Printf("Get data from %v\n", sensor)
-			airlyExporter.QuerySensor(sensor)
+			airlyExporter.querySensor(sensor)
 		}
 		<-time.After(duration)
 	}
 }
 
-func (airlyExporter AirlyExporter) QuerySensor(sensor string) {
+func (airlyExporter AirlyExporter) querySensor(sensor string) {
 
-	airlyExporter.promCollectors.count_total.Inc()
+	airlyExporter.promCollectors.countTotal.Inc()
 
 	timer := prometheus.NewTimer(airlyExporter.promCollectors.responseTime)
 	defer timer.ObserveDuration()
@@ -117,11 +118,11 @@ func (airlyExporter AirlyExporter) QuerySensor(sensor string) {
 	}
 	if err != nil {
 		log.Println(err)
-		airlyExporter.promCollectors.error_total.Inc()
+		airlyExporter.promCollectors.errorTotal.Inc()
 		return
 	}
 	if code != 200 {
-		fmt.Println("Unexpected response code %v", code)
+		log.Printf("Unexpected response code %v", code)
 		return
 	}
 
@@ -129,14 +130,14 @@ func (airlyExporter AirlyExporter) QuerySensor(sensor string) {
 	airlyExporter.promCollectors.SetMeasurements(sensor, measurements.CurrentMeasurements)
 }
 
-func (airlyExporter *AirlyExporter) FlagParse() {
+func (airlyExporter *AirlyExporter) flagParse() {
 
-	airlyExporter.configFile = FlagStringWithDefaultFromEnv("config-file", "", "Path to the config file (format: flag=value\\n).")
-	airlyExporter.listenAddress = FlagStringWithDefaultFromEnv("listen-address", ":8080", "the address to listen on for http requests.")
-	airlyExporter.apiKey = FlagStringWithDefaultFromEnv("api-key", "", "Your key for Airly API")
-	airlyExporter.apiUrl = FlagStringWithDefaultFromEnv("api-url", "https://airapi.airly.eu", "Airly API endpoint")
-	airlyExporter.refreshInterval = FlagStringWithDefaultFromEnv("refresh-interval", "5m", "Refresh sensor interval with units")
-	airlyExporter.sensors = FlagStringWithDefaultFromEnv("sensors", "204,822", "Comma separated sensors IDs")
+	airlyExporter.configFile = flagStringWithDefaultFromEnv("config-file", "", "Path to the config file (format: flag=value\\n).")
+	airlyExporter.listenAddress = flagStringWithDefaultFromEnv("listen-address", ":8080", "the address to listen on for http requests.")
+	airlyExporter.apiKey = flagStringWithDefaultFromEnv("api-key", "", "Your key for Airly API")
+	airlyExporter.apiURL = flagStringWithDefaultFromEnv("api-url", "https://airapi.airly.eu", "Airly API endpoint")
+	airlyExporter.refreshInterval = flagStringWithDefaultFromEnv("refresh-interval", "5m", "Refresh sensor interval with units")
+	airlyExporter.sensors = flagStringWithDefaultFromEnv("sensors", "204,822", "Comma separated sensors IDs")
 	flag.Parse()
 }
 
@@ -144,17 +145,17 @@ func main() {
 
 	airlyExporter := AirlyExporter{}
 
-	airlyExporter.FlagParse()
+	airlyExporter.flagParse()
 	airlyExporter.promCollectors.RegisterCollectors()
 
 	if *airlyExporter.configFile != "" {
-		airlyExporter.ReadConfigFile()
-		go airlyExporter.WatchConfig()
+		airlyExporter.readConfigFile()
+		go airlyExporter.watchConfig()
 	}
 
 	log.Println("Airly-exporter started")
 
-	go airlyExporter.WatchSensors()
+	go airlyExporter.watchSensors()
 
 	http.Handle("/", http.RedirectHandler("/metrics", 302))
 	http.Handle("/metrics", promhttp.Handler())
