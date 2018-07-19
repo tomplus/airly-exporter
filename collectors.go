@@ -122,7 +122,7 @@ func (promCollectors *PromCollectors) SetMeasurements(sensor string, measurement
 	promCollectors.pm25.With(sensorLabels).Set(measurements.Pm25)
 	promCollectors.pollutionLevel.With(sensorLabels).Set(measurements.PollutionLevel)
 	promCollectors.pressure.With(sensorLabels).Set(measurements.Pressure)
-    promCollectors.temperature.With(sensorLabels).Set(measurements.Temperature)
+	promCollectors.temperature.With(sensorLabels).Set(measurements.Temperature)
 	promCollectors.windDirection.With(sensorLabels).Set(measurements.WindDirection)
 	promCollectors.windSpeed.With(sensorLabels).Set(measurements.WindSpeed)
 }

@@ -46,7 +46,7 @@ func NewAPIClient(apiURL string, apiKey string) *APIClient {
 	return &APIClient{apiURL, apiKey}
 }
 
-// SensorMeasurements returns response from Airly API for sensorID 
+// SensorMeasurements returns response from Airly API for sensorID
 func (api *APIClient) SensorMeasurements(sensorID string) (SensorMeasurementsResponse, int, error) {
 
 	var response SensorMeasurementsResponse
