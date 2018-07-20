@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestRegisterCollectors(t *testing.T) {
+func TestCollectors(t *testing.T) {
 
 	pc := PromCollectors{}
 	pc.RegisterCollectors()
@@ -15,4 +15,7 @@ func TestRegisterCollectors(t *testing.T) {
 	if pc.errorTotal == nil {
 		t.Errorf("errorTotal not inited")
 	}
+
+	measurements := AllMeasurements{}
+	pc.SetMeasurements("1234", measurements)
 }
