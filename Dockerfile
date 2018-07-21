@@ -8,4 +8,7 @@ RUN go install -v ./...
 
 EXPOSE 8080
 
+# nobody
+USER 65534
+
 CMD ["airly-exporter"]
