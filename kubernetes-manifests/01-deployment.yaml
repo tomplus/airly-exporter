@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: airly-exporter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: airly-exporter
+    spec:
+      containers:
+      - name: airly-exporter
+        image: tpimages/airly-exporter:latest
+        env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: airly-exporter
+              key: api-key
+        - name: SENSORS
+          value: "822,1096"
+        ports:
+        - name: metrics
+          containerPort: 8080

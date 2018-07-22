@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: airly-exporter
+  labels:
+    team: frontend
+spec:
+  selector:
+    matchLabels:
+      app: airly-exporter
+  endpoints:
+  - port: metrics

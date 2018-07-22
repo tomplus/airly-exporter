@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: airly-exporter
+  labels:
+    app: airly-exporter
+spec:
+  selector:
+    app: airly-exporter
+  ports:
+  - name: metrics
+    port: 8080
