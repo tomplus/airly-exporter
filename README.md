@@ -71,6 +71,12 @@ Alternatively you can install this using `go`:
 
 or download binary file from [airly-exporter/releases](https://github.com/tomplus/airly-exporter/releases).
 
+## Running on Kubernetes cluster with Prometheus Operator
+
+The repository contains example manifests to deploy Airly-exporter to Kubernetes with
+[Prometheus Operator](https://github.com/coreos/prometheus-operator) installed. There are manifests
+for creating Deployment, Service and Service Monitor.
+
 ## List of exposed metrics:
 
 ```
