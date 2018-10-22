@@ -16,6 +16,6 @@ func TestCollectors(t *testing.T) {
 		t.Errorf("errorTotal not inited")
 	}
 
-	measurements := AllMeasurements{}
+	measurements := MeasurementsTimeFramed{}
 	pc.SetMeasurements("1234", measurements)
 }

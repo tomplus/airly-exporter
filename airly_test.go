@@ -9,55 +9,136 @@ import (
 )
 
 const TestResponseValid = `{
-  "currentMeasurements": {
-    "airQualityIndex": 1,
-    "humidity": 2,
-    "measurementTime": "string",
-    "pm1": 3,
-    "pm10": 4,
-    "pm25": 5,
-    "pollutionLevel": 6,
-    "pressure": 7,
-    "temperature": 8,
-    "windDirection": 9,
-    "windSpeed": 10
-  },
-  "forecast": [
-    {
-      "fromDateTime": "string",
-      "measurements": {
-        "airQualityIndex": 11,
-        "humidity": 12,
-        "measurementTime": "string",
-        "pm1": 13,
-        "pm10": 14,
-        "pm25": 15,
-        "pollutionLevel": 16,
-        "pressure": 17,
-        "temperature": 18,
-        "windDirection": 19,
-        "windSpeed": 20
+  "current": {
+    "fromDateTime": "2018-01-01T21:46:25.476Z",
+    "tillDateTime": "2018-01-01T22:46:25.476Z",
+    "values": [
+      {
+        "name": "PM1",
+        "value": 17.01
       },
-      "tillDateTime": "string"
-    }
-  ],
+      {
+        "name": "PM25",
+        "value": 25.69
+      },
+      {
+        "name": "PM10",
+        "value": 49.7
+      },
+      {
+        "name": "PRESSURE",
+        "value": 1025.82
+      },
+      {
+        "name": "HUMIDITY",
+        "value": 82.91
+      },
+      {
+        "name": "TEMPERATURE",
+        "value": 7.64
+      }
+    ],
+    "indexes": [
+      {
+        "name": "AIRLY_CAQI",
+        "value": 49.7,
+        "level": "LOW",
+        "description": "Air is quite good.",
+        "advice": "How about going for a walk?",
+        "color": "#D1CF1E"
+      }
+    ],
+    "standards": [
+      {
+        "name": "WHO",
+        "pollutant": "PM25",
+        "limit": 25,
+        "percent": 102.77
+      }
+    ]
+  },
   "history": [
     {
-      "fromDateTime": "string",
-      "measurements": {
-        "airQualityIndex": 21,
-        "humidity": 22,
-        "measurementTime": "string",
-        "pm1": 23,
-        "pm10": 24,
-        "pm25": 25,
-        "pollutionLevel": 26,
-        "pressure": 27,
-        "temperature": 28,
-        "windDirection": 29,
-        "windSpeed": 30
-      },
-      "tillDateTime": "string"
+      "fromDateTime": "2018-10-19T22:00:00Z",
+      "tillDateTime": "2018-10-19T23:00:00Z",
+      "values": [
+        {
+          "name": "PM1",
+          "value": 26.66
+        },
+        {
+          "name": "PM25",
+          "value": 42.97
+        },
+        {
+          "name": "PM10",
+          "value": 79.19
+        },
+        {
+          "name": "PRESSURE",
+          "value": 1025.44
+        },
+        {
+          "name": "HUMIDITY",
+          "value": 92.64
+        },
+        {
+          "name": "TEMPERATURE",
+          "value": 10.22
+        }
+      ],
+      "indexes": [
+        {
+          "name": "AIRLY_CAQI",
+          "value": 68.24,
+          "level": "MEDIUM",
+          "description": "Well... It's been better.",
+          "advice": "Neither good nor bad. Think before leaving the house.",
+          "color": "#EFBB0F"
+        }
+      ],
+      "standards": [
+        {
+          "name": "WHO",
+          "pollutant": "PM25",
+          "limit": 25,
+          "percent": 171.88
+        }
+      ]
+    }
+  ],
+  "forecast": [
+    {
+      "fromDateTime": "2018-01-01T22:00:00Z",
+      "tillDateTime": "2018-01-01T23:00:00Z",
+      "values": [
+        {
+          "name": "PM25",
+          "value": 27.48
+        },
+        {
+          "name": "PM10",
+          "value": 53.29
+        }
+      ],
+      "indexes": [
+        {
+          "name": "AIRLY_CAQI",
+          "value": 52.06,
+          "level": "MEDIUM",
+          "description": "Well... It's been better.",
+          "advice": "Protect your lungs!",
+          "color": "#EFBB0F"
+        }
+      ],
+      "standards": [
+        {
+          "name": "WHO",
+          "pollutant": "PM25",
+          "limit": 25,
+          "percent": 109.93
+        }
+      ]
     }
   ]
 }`
@@ -81,20 +162,83 @@ func TestSensorMeasurements(t *testing.T) {
 	}
 
 	expected := SensorMeasurementsResponse{
-		CurrentMeasurements: AllMeasurements{AirQualityIndex: 1,
-			Humidity:        2,
-			MeasurementTime: "string",
-			Pm1:             3,
-			Pm10:            4,
-			Pm25:            5,
-			PollutionLevel:  6,
-			Pressure:        7,
-			Temperature:     8,
-			WindDirection:   9,
-			WindSpeed:       10},
+		Current: MeasurementsTimeFramed{
+			FromDateTime: "2018-01-01T21:46:25.476Z",
+			TillDateTime: "2018-01-01T22:46:25.476Z",
+			Values: []MeasuredValue{
+				MeasuredValue{Name: "PM1", Value: 17.01},
+				MeasuredValue{Name: "PM25", Value: 25.69},
+				MeasuredValue{Name: "PM10", Value: 49.7},
+				MeasuredValue{Name: "PRESSURE", Value: 1025.82},
+				MeasuredValue{Name: "HUMIDITY", Value: 82.91},
+				MeasuredValue{Name: "TEMPERATURE", Value: 7.64}},
+			Indexes: []MeasuredIndex{
+				MeasuredIndex{
+					Name:        "AIRLY_CAQI",
+					Value:       49.7,
+					Level:       "LOW",
+					Description: "Air is quite good.",
+					Advice:      "How about going for a walk?",
+					Color:       "#D1CF1E"}},
+			Standards: []MeasuredStandard{
+				MeasuredStandard{
+					Name:      "WHO",
+					Pollutant: "PM25",
+					Limit:     25,
+					Percent:   102.77}},
+		},
+		History: []MeasurementsTimeFramed{
+			MeasurementsTimeFramed{
+				FromDateTime: "2018-10-19T22:00:00Z",
+				TillDateTime: "2018-10-19T23:00:00Z",
+				Values: []MeasuredValue{
+					MeasuredValue{Name: "PM1", Value: 26.66},
+					MeasuredValue{Name: "PM25", Value: 42.97},
+					MeasuredValue{Name: "PM10", Value: 79.19},
+					MeasuredValue{Name: "PRESSURE", Value: 1025.44},
+					MeasuredValue{Name: "HUMIDITY", Value: 92.64},
+					MeasuredValue{Name: "TEMPERATURE", Value: 10.22}},
+				Indexes: []MeasuredIndex{
+					MeasuredIndex{
+						Name:        "AIRLY_CAQI",
+						Value:       68.24,
+						Level:       "MEDIUM",
+						Description: "Well... It's been better.",
+						Advice:      "Neither good nor bad. Think before leaving the house.",
+						Color:       "#EFBB0F"}},
+				Standards: []MeasuredStandard{
+					MeasuredStandard{
+						Name:      "WHO",
+						Pollutant: "PM25",
+						Limit:     25,
+						Percent:   171.88}},
+			},
+		},
+		Forecast: []MeasurementsTimeFramed{
+			MeasurementsTimeFramed{
+				FromDateTime: "2018-01-01T22:00:00Z",
+				TillDateTime: "2018-01-01T23:00:00Z",
+				Values: []MeasuredValue{
+					MeasuredValue{Name: "PM25", Value: 27.48},
+					MeasuredValue{Name: "PM10", Value: 53.29}},
+				Indexes: []MeasuredIndex{
+					MeasuredIndex{
+						Name:        "AIRLY_CAQI",
+						Value:       52.06,
+						Level:       "MEDIUM",
+						Description: "Well... It's been better.",
+						Advice:      "Protect your lungs!",
+						Color:       "#EFBB0F"}},
+				Standards: []MeasuredStandard{
+					MeasuredStandard{
+						Name:      "WHO",
+						Pollutant: "PM25",
+						Limit:     25,
+						Percent:   109.93}},
+			}},
 	}
 
-	if !reflect.DeepEqual(resp.CurrentMeasurements, expected.CurrentMeasurements) {
-		t.Errorf("assert response %+v is not %v", resp, expected)
+	if !reflect.DeepEqual(resp, expected) {
+		t.Errorf("assert response %+v is not %+v", resp, expected)
 	}
 }
