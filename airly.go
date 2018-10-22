@@ -14,31 +14,39 @@ type APIClient struct {
 
 // SensorMeasurementsResponse is a response from API with measurements
 type SensorMeasurementsResponse struct {
-	CurrentMeasurements AllMeasurements          `json:"currentMeasurements,omitempty"`
-	Forecast            []MeasurementsTimeFramed `json:"forecast,omitempty"`
-	History             []MeasurementsTimeFramed `json:"history,omitempty"`
+	Current  MeasurementsTimeFramed   `json:"current,omitempty"`
+	Forecast []MeasurementsTimeFramed `json:"forecast,omitempty"`
+	History  []MeasurementsTimeFramed `json:"history,omitempty"`
 }
 
 // MeasurementsTimeFramed is a response from API with measurement time series
 type MeasurementsTimeFramed struct {
-	FromDateTime string          `json:"fromDateTime,omitempty"`
-	Measurements AllMeasurements `json:"measurements,omitempty"`
-	TillDateTime string          `json:"tillDateTime,omitempty"`
+	FromDateTime string             `json:"fromDateTime,omitempty"`
+	TillDateTime string             `json:"tillDateTime,omitempty"`
+	Values       []MeasuredValue    `json:"values,omitempty"`
+	Indexes      []MeasuredIndex    `json:"indexes,omitempty"`
+	Standards    []MeasuredStandard `json:"standards,omitempty"`
 }
 
-// AllMeasurements is a response from API with one set of measurement
-type AllMeasurements struct {
-	AirQualityIndex float64 `json:"airQualityIndex,omitempty"`
-	Humidity        float64 `json:"humidity,omitempty"`
-	MeasurementTime string  `json:"measurementTime,omitempty"`
-	Pm1             float64 `json:"pm1,omitempty"`
-	Pm10            float64 `json:"pm10,omitempty"`
-	Pm25            float64 `json:"pm25,omitempty"`
-	PollutionLevel  float64 `json:"pollutionLevel,omitempty"`
-	Pressure        float64 `json:"pressure,omitempty"`
-	Temperature     float64 `json:"temperature,omitempty"`
-	WindDirection   float64 `json:"windDirection,omitempty"`
-	WindSpeed       float64 `json:"windSpeed,omitempty"`
+type MeasuredValue struct {
+	Name  string  `json:"name,omitempty"`
+	Value float64 `json:"value,omitempty"`
+}
+
+type MeasuredIndex struct {
+	Name        string  `json:"name,omitempty"`
+	Value       float64 `json:"value,omitempty"`
+	Level       string  `json:"level,omitempty"`
+	Description string  `json:"description,omitempty"`
+	Advice      string  `json:"advice,omitempty"`
+	Color       string  `json:"color,omitempty"`
+}
+
+type MeasuredStandard struct {
+	Name      string  `json:"name,omitempty"`
+	Pollutant string  `json:"pollutant,omitempty"`
+	Limit     float64 `json:"limit,omitempty"`
+	Percent   float64 `json:"percent,omitempty"`
 }
 
 // NewAPIClient creates a new APIClient
@@ -46,15 +54,15 @@ func NewAPIClient(apiURL string, apiKey string) *APIClient {
 	return &APIClient{apiURL, apiKey}
 }
 
-// SensorMeasurements returns response from Airly API for sensorID
-func (api *APIClient) SensorMeasurements(sensorID string) (SensorMeasurementsResponse, int, error) {
+// SensorMeasurements returns response from Airly API for installationId
+func (api *APIClient) SensorMeasurements(installationId string) (SensorMeasurementsResponse, int, error) {
 
 	var response SensorMeasurementsResponse
 
 	v := url.Values{}
 	v.Set("apikey", api.key)
-	v.Set("sensorId", sensorID)
-	req := api.url + "/v1/sensor/measurements?" + v.Encode()
+	v.Set("installationId", installationId)
+	req := api.url + "/v2/measurements/installation?" + v.Encode()
 
 	resp, err := http.Get(req)
 	if err != nil {

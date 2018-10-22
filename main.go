@@ -126,8 +126,8 @@ func (airlyExporter AirlyExporter) querySensor(sensor string) {
 		return
 	}
 
-	fmt.Printf("Debug measurements %+v\n", measurements.CurrentMeasurements)
-	airlyExporter.promCollectors.SetMeasurements(sensor, measurements.CurrentMeasurements)
+	fmt.Printf("Debug measurements %+v\n", measurements.Current)
+	airlyExporter.promCollectors.SetMeasurements(sensor, measurements.Current)
 }
 
 func (airlyExporter *AirlyExporter) flagParse() {
@@ -137,7 +137,7 @@ func (airlyExporter *AirlyExporter) flagParse() {
 	airlyExporter.apiKey = flagStringWithDefaultFromEnv("api-key", "", "Your key for Airly API")
 	airlyExporter.apiURL = flagStringWithDefaultFromEnv("api-url", "https://airapi.airly.eu", "Airly API endpoint")
 	airlyExporter.refreshInterval = flagStringWithDefaultFromEnv("refresh-interval", "5m", "Refresh sensor interval with units")
-	airlyExporter.sensors = flagStringWithDefaultFromEnv("sensors", "204,822", "Comma separated sensors IDs")
+	airlyExporter.sensors = flagStringWithDefaultFromEnv("sensors", "204,822", "Comma separated sensors/installations IDs")
 	flag.Parse()
 }
 
