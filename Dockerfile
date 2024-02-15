@@ -1,19 +1,21 @@
-FROM golang:1.10-alpine
+FROM golang:1.22-alpine
 
 RUN apk add --no-cache git
 
-WORKDIR /go/src/airly-exporter
-COPY *.go /go/src/airly-exporter/
+WORKDIR /app
+COPY *.go .
+COPY go.mod .
+COPY go.sum .
 
-RUN go get -d -v ./...
-RUN go install -v ./...
+RUN go mod download
+RUN go build
 
 FROM alpine
 
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
-WORKDIR /go/bin/
-COPY --from=0 /go/bin/airly-exporter /go/bin/airly-exporter
+WORKDIR /app
+COPY --from=0 /app/airly-exporter /app/airly-exporter
 
 EXPOSE 8080
 

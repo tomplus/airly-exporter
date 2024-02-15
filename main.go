@@ -1,20 +1,19 @@
-// Copyright 2018 Airly-exporter Authors
-
 package main
 
 import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // AirlyExporter contains parameters for Airly-exporter
@@ -136,8 +135,8 @@ func (airlyExporter *AirlyExporter) flagParse() {
 	airlyExporter.listenAddress = flagStringWithDefaultFromEnv("listen-address", ":8080", "the address to listen on for http requests.")
 	airlyExporter.apiKey = flagStringWithDefaultFromEnv("api-key", "", "Your key for Airly API")
 	airlyExporter.apiURL = flagStringWithDefaultFromEnv("api-url", "https://airapi.airly.eu", "Airly API endpoint")
-	airlyExporter.refreshInterval = flagStringWithDefaultFromEnv("refresh-interval", "5m", "Refresh sensor interval with units")
-	airlyExporter.sensors = flagStringWithDefaultFromEnv("sensors", "204,822", "Comma separated sensors/installations IDs")
+	airlyExporter.refreshInterval = flagStringWithDefaultFromEnv("refresh-interval", "60m", "Refresh sensor interval with units")
+	airlyExporter.sensors = flagStringWithDefaultFromEnv("sensors", "17,97128", "Comma separated sensors/installations IDs (default Krakow, Warszawa)")
 	flag.Parse()
 }
 
@@ -157,7 +156,7 @@ func main() {
 
 	go airlyExporter.watchSensors()
 
-	http.Handle("/", http.RedirectHandler("/metrics", 302))
+	http.Handle("/", http.RedirectHandler("/metrics", http.StatusFound))
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(*airlyExporter.listenAddress, nil))
 }
