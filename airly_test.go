@@ -166,14 +166,14 @@ func TestSensorMeasurements(t *testing.T) {
 			FromDateTime: "2018-01-01T21:46:25.476Z",
 			TillDateTime: "2018-01-01T22:46:25.476Z",
 			Values: []MeasuredValue{
-				MeasuredValue{Name: "PM1", Value: 17.01},
-				MeasuredValue{Name: "PM25", Value: 25.69},
-				MeasuredValue{Name: "PM10", Value: 49.7},
-				MeasuredValue{Name: "PRESSURE", Value: 1025.82},
-				MeasuredValue{Name: "HUMIDITY", Value: 82.91},
-				MeasuredValue{Name: "TEMPERATURE", Value: 7.64}},
+				{Name: "PM1", Value: 17.01},
+				{Name: "PM25", Value: 25.69},
+				{Name: "PM10", Value: 49.7},
+				{Name: "PRESSURE", Value: 1025.82},
+				{Name: "HUMIDITY", Value: 82.91},
+				{Name: "TEMPERATURE", Value: 7.64}},
 			Indexes: []MeasuredIndex{
-				MeasuredIndex{
+				{
 					Name:        "AIRLY_CAQI",
 					Value:       49.7,
 					Level:       "LOW",
@@ -181,25 +181,25 @@ func TestSensorMeasurements(t *testing.T) {
 					Advice:      "How about going for a walk?",
 					Color:       "#D1CF1E"}},
 			Standards: []MeasuredStandard{
-				MeasuredStandard{
+				{
 					Name:      "WHO",
 					Pollutant: "PM25",
 					Limit:     25,
 					Percent:   102.77}},
 		},
 		History: []MeasurementsTimeFramed{
-			MeasurementsTimeFramed{
+			{
 				FromDateTime: "2018-10-19T22:00:00Z",
 				TillDateTime: "2018-10-19T23:00:00Z",
 				Values: []MeasuredValue{
-					MeasuredValue{Name: "PM1", Value: 26.66},
-					MeasuredValue{Name: "PM25", Value: 42.97},
-					MeasuredValue{Name: "PM10", Value: 79.19},
-					MeasuredValue{Name: "PRESSURE", Value: 1025.44},
-					MeasuredValue{Name: "HUMIDITY", Value: 92.64},
-					MeasuredValue{Name: "TEMPERATURE", Value: 10.22}},
+					{Name: "PM1", Value: 26.66},
+					{Name: "PM25", Value: 42.97},
+					{Name: "PM10", Value: 79.19},
+					{Name: "PRESSURE", Value: 1025.44},
+					{Name: "HUMIDITY", Value: 92.64},
+					{Name: "TEMPERATURE", Value: 10.22}},
 				Indexes: []MeasuredIndex{
-					MeasuredIndex{
+					{
 						Name:        "AIRLY_CAQI",
 						Value:       68.24,
 						Level:       "MEDIUM",
@@ -207,7 +207,7 @@ func TestSensorMeasurements(t *testing.T) {
 						Advice:      "Neither good nor bad. Think before leaving the house.",
 						Color:       "#EFBB0F"}},
 				Standards: []MeasuredStandard{
-					MeasuredStandard{
+					{
 						Name:      "WHO",
 						Pollutant: "PM25",
 						Limit:     25,
@@ -215,14 +215,14 @@ func TestSensorMeasurements(t *testing.T) {
 			},
 		},
 		Forecast: []MeasurementsTimeFramed{
-			MeasurementsTimeFramed{
+			{
 				FromDateTime: "2018-01-01T22:00:00Z",
 				TillDateTime: "2018-01-01T23:00:00Z",
 				Values: []MeasuredValue{
-					MeasuredValue{Name: "PM25", Value: 27.48},
-					MeasuredValue{Name: "PM10", Value: 53.29}},
+					{Name: "PM25", Value: 27.48},
+					{Name: "PM10", Value: 53.29}},
 				Indexes: []MeasuredIndex{
-					MeasuredIndex{
+					{
 						Name:        "AIRLY_CAQI",
 						Value:       52.06,
 						Level:       "MEDIUM",
@@ -230,7 +230,7 @@ func TestSensorMeasurements(t *testing.T) {
 						Advice:      "Protect your lungs!",
 						Color:       "#EFBB0F"}},
 				Standards: []MeasuredStandard{
-					MeasuredStandard{
+					{
 						Name:      "WHO",
 						Pollutant: "PM25",
 						Limit:     25,
